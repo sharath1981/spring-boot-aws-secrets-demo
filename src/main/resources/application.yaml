@@ -1,5 +1,3 @@
-aws:
-  access-key: access-key
-  secret-key: secret-key
-  region: ap-south-1
-  secret-name: arn:aws:secretsmanager:ap-south-1:complete:secret:path
+spring:
+  config: 
+    import: optional:secrets.yaml

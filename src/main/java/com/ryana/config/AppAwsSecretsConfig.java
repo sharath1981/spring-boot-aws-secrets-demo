@@ -23,30 +23,29 @@ import org.springframework.context.annotation.Configuration;
 public class AppAwsSecretsConfig {
 
     @Value("${aws.secret-key}")
-    private String SECRET_KEY;
+    private String secretKey;
     @Value("${aws.access-key}")
-    private String ACCESS_KEY;
+    private String accessKey;
     @Value("${aws.region}")
-    private String REGION;
+    private String region;
     @Value("${aws.secret-name}")
-    private String SECRET_NAME;
+    private String secretName;
 
     @Bean
     public AwsSecrets awsSecrets() {
         final var client = AWSSecretsManagerClientBuilder.standard()
-                .withRegion(REGION)
+                .withRegion(region)
                 .withCredentials(new AWSStaticCredentialsProvider(
-                        new BasicAWSCredentials(ACCESS_KEY, SECRET_KEY)))
+                        new BasicAWSCredentials(accessKey, secretKey)))
                 .build();
 
-        final var getSecretValueRequest = new GetSecretValueRequest().withSecretId(SECRET_NAME);
+        final var getSecretValueRequest = new GetSecretValueRequest().withSecretId(secretName);
         try {
             final var getSecretValueResult = client.getSecretValue(getSecretValueRequest);
             if (Objects.nonNull(getSecretValueResult)) {
                 final var mapper = new ObjectMapper();
                 try {
-                    final var readValue = mapper.readValue(getSecretValueResult.getSecretString(), AwsSecrets.class);
-                    return readValue;
+                    return mapper.readValue(getSecretValueResult.getSecretString(), AwsSecrets.class);
                 } catch (JsonProcessingException e) {
                     e.printStackTrace();
                 }
